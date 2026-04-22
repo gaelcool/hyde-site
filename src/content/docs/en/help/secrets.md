@@ -50,7 +50,7 @@ Then reboot.
 
 1. **A service requires elevation** — A service (such as GParted or Dolphin) requires elevation to perform a task. The system uses the policies defined by `polkit` (and established in `/usr/share/polkit-1/...`) to determine whether the task requires elevated privileges. If elevation is needed, whichever polkit agent `polkitkdeauth.sh` launched renders the password prompt. If valid, the service is allowed to escalate privileges temporarily.
 
-2. **Retrieving a credential** — When the application needs those credentials again, the polkit agent prompts for your password. This should be seamless so long as you are not missing dependencies or have a misconfiguration from installing [HyDE incorrectly](../../getting-started/installation/).
+2. **Retrieving a credential** — When the application needs those credentials again, the graphical polkit agent prompts for your password. This should be seamless so long as you are not missing dependencies or have a misconfiguration from installing [HyDE incorrectly](../../getting-started/installation/).
 
 ---
 
@@ -95,7 +95,7 @@ HyDE ships three configuration scripts to integrate with UWSM and apply the stan
 | `00-hyde.sh` | `$XDG_CONFIG_HOME/uwsm/env-hyprland.d/` | Sets defaults for Electron apps, Hyprland config paths, and toolkit fallbacks. |
 
 :::note[You don't need to edit these]
-These configuration scripts are opinionated so that HyDE's variables, keybinds, and theme configuration have redundant (good) fallbacks. If you're having autostart issues, the recommendation is to make sure UWSM is selected at your login manager. Alternatively, reinstall HyDE to ensure your system's UWSM is properly set up by removing any leftover configs in both `~/.local` and `~/.local/share`.
+These configuration scripts are opinionated so that HyDE's variables, keybinds, and theme configuration have redundant (good) fallbacks. If you're having autostart issues, the recommendation is to make sure UWSM is selected at your login manager.
 :::
 
 Refer to [the Hyprland configuring section](../../configuring/hyprland/) for finer control of what occurs on login under HyDE.
@@ -139,7 +139,7 @@ HyDE has two separate concepts that users often conflate:
 - **Theme** (<kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>T</kbd> or `hyde-shell theme select`) — selects a complete theme bundle: wallpaper set, GTK arc, icon pack, cursor, Kvantum preset, and pre-defined color overrides. 
 - **Mode** (<kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>R</kbd>) — cycles between _wallbash_ modes (colors extracted live from your current wallpaper) and _theme_ mode (colors from the theme bundle's pre-defined palette). This affects wallbash-driven apps without changing the theme itself. 
 
-Both actions converge on the same pipeline. Selecting a theme (`hyde-shell themeselect`) presents a rofi picker, then calls `theme.switch.sh` — the central orchestrator. Toggling mode (`hyde-shell wallbashtoggle -m`) presents a rofi picker for the four modes (theme, auto, dark, light), writes the choice to state, and also calls `theme.switch.sh`.
+Both actions converge on the same pipeline. Selecting a theme (`hyde-shell theme select`) presents a rofi picker, then calls `theme.switch.sh` — the central orchestrator. Toggling mode (`hyde-shell wallbashtoggle -m`) presents a rofi picker for the four modes (theme, auto, dark, light), writes the choice to state, and also calls `theme.switch.sh`.
 
 `theme.switch.sh` does the heavy lifting: it sources `globalcontrol.sh` for environment setup, loads the theme's variables (GTK theme, icon pack, cursor, fonts), and writes them to every relevant config file — qt5ct, qt6ct, kdeglobals, gtk-2.0, gtk-3.0, gtk-4.0, xsettingsd, flatpak overrides, and Xresources. It then calls `wallpaper.sh` to set the theme's wallpaper, which in turn triggers `color.set.sh` — the wallbash template engine. `color.set.sh` loads the dominant color (dcol) data cached for the current wallpaper, builds sed substitution scripts from those colors, and applies them in parallel to every registered `.dcol` and `.theme` template across the wallbash directories.
 
