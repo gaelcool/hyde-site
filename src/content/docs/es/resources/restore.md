@@ -11,14 +11,19 @@ En este contexto, "restaurar" significa llevar los dotfiles del repositorio haci
 ```
 
 **Advertencia — el segundo argumento es un origen, no un destino.** Si pasa algo como `~/.config` aquí, esperando que signifique "restaurar dentro de mi directorio de configuración", el script en cambio buscará los archivos de origen *anidados dentro de* `~/.config`.
-Cada paso de restauración fallará entonces silenciosamente con `No such file or directory`, mientras que la lista pasada sea incomprensible.
-No corras la script de restore a solas.
+Cada paso de restauración fallará silenciosamente con `No such file or directory`, mientras que la lista registrada sea incomprensible.
+No ejecute el script de restore sin razón.
 
 :::
 
 Dado que `.local/lib/hyde` se restaura mediante este mismo mecanismo, una ejecución fallida aquí puede corromper la biblioteca de HyDE
  y luego no lograr reemplazarla — si `hyde-shell`  responde con algo como (`Error: Could not load HyDE, broken installation?`).
- Revise `~/.config/cfg_backups/<timestamp>/.local/lib/hyde/` cual incluye una copia de respaldo.
+ Revise `"${XDG_CONFIG_HOME:-$HOME/.config}/cfg_backups/<timestamp>/.local/lib/hyde/"` cual incluye una copia de respaldo.
+
+```bash
+rsync -av ~/HyDE/Configs/.config/ "${XDG_CONFIG_HOME:-$HOME}/"&&
+rsync -av ~/HyDE/Configs/.local/ "${XDG_DATA_HOME:-$HOME}/.local/"
+```
 
 ## Valores Separados por Pipes (PSV)
 
@@ -50,12 +55,12 @@ Se recomienda verificar que sus dotfiles locales estén alineados con los del re
 
 ```bash
 rsync -rnc --itemize-changes --exclude='.git' \                                                               
- ~/HyDE/Configs/.config/ ~/.config/
+ ~/HyDE/Configs/.config/ "${XDG_CONFIG_HOME:-$HOME}/.config/"
 ```
 
 Las líneas que comienzan con `>f+++++++++` son archivos que existen en el upstream pero que faltan localmente. Las líneas como `>fc.......T` corresponden a archivos cuyo contenido difiere — por ejemplo, una personalización suya, o una copia desactualizada.
 
-Una vez identificados los archivos de configuración faltantes, o incluso directorios completos ausentes, debe comenzar un respaldo, si bien desea convertir sus antiguo sintax a uno correspondiente con Lua, donde sea aplicable puede usar: [(hyprconf2lua) [https://github.com/Prateek-squadron/hyprconf2lua]].
+Una vez identificados los archivos de configuración faltantes, o incluso directorios completos ausentes, debe comenzar un respaldo, si bien desea convertir sus antiguo sintax a uno correspondiente con Lua, donde sea aplicable puede usar: [hyprconf2lua](https://github.com/Prateek-squadron/hyprconf2lua).
 
 Tambien puedes acceder el directorio de respaldo mantenido por HyDE:
 

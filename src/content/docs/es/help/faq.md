@@ -145,7 +145,7 @@ Lee esto primero: https://wiki.hyprland.org/Configuring/Variables/#input
 En HyDE genera un archivo `~/.config/hypr/custom.lua`, añade la configuración allí.
 
 ```lua
-# ~/.config/hypr/hyprland.lua
+-- ~/.config/hypr/hyprland.lua
 hl.config({
     input = {
         kb_layout = "us,es",
